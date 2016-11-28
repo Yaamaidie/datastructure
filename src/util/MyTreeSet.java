@@ -1,5 +1,6 @@
 package util;
 
+
 /**
  * 习题4.11 内部维护一个二叉查找树，在每个节点上添加一个指向父节点的链
  * @author lee
@@ -162,18 +163,64 @@ public class MyTreeSet <T extends Comparable<? super T>> {
 	}
 	
 	private class MyTreeSetIterator implements java.util.Iterator<T> {
+		private BinaryNode<T> current = findMin(root);
+		private BinaryNode<T> previous = current;
+		private int exceptModCount = modCount;
+		private boolean okToRemove = false;
+		private boolean atEnd = false;
 
 		@Override
 		public boolean hasNext() {
-			return false;
+			return atEnd;
 		}
 
 		@Override
-		public T next() {
-			return null;
+		public T next() throws java.util.NoSuchElementException, java.util.ConcurrentModificationException{
+			if (!hasNext()) {
+				throw new java.util.NoSuchElementException();
+			} 
+			if (modCount != exceptModCount) {
+				throw new java.util.ConcurrentModificationException();
+			}
+			
+			T nextItem = current.element;
+			
+			//更新current
+			if (current.right != null) {//存在右儿子，下一个节点就是右子树的最小节点
+				current = findMin(current.right);
+			} else {
+				BinaryNode<T> child = current;
+				BinaryNode<T> parent = current.parent;
+
+				while (current !=null && current.left != child) {
+					child = current;
+					current = current.parent;
+				}
+
+				if (current == null) {
+					atEnd = true;
+				}
+			}
+
+			okToRemove = true;
+
+			return nextItem;
+		}
+
+		public void remove() throws java.util.ConcurrentModificationException, java.lang.IllegalStateException{
+			if (modCount != exceptModCount) {
+				throw new java.util.ConcurrentModificationException();
+			}
+			if (!okToRemove) {
+				throw new java.lang.IllegalStateException();
+			}
+
+			MyTreeSet.this.remove(previous.element);
+			okToRemove = false;
 		}
 		
 	}
+
 	private static class BinaryNode<E>{
 		E element;
 		BinaryNode<E> left;

@@ -1,0 +1,4 @@
+#java class file
+*.class
+#vscode config file
+.vscode
