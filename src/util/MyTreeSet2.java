@@ -6,7 +6,19 @@ package util;
  *
  * @param <T>
  */
-public class MyTreeSet2<T extends Comparable<? super T>> {
+public class MyTreeSet2<T extends Comparable<? super T>> implements Iterable<T>{
+	public static void main(String[] args) {
+		MyTreeSet2<Integer> treeSet = new MyTreeSet2<>();
+		treeSet.insert(8);
+		treeSet.insert(5);
+		treeSet.insert(7);
+		treeSet.insert(3);
+		treeSet.insert(9);
+		treeSet.printTree();
+		for (Integer i : treeSet) {
+			System.out.println(i);
+		}
+	}
 	private BinaryNode<T> root;
 	private int modCount;
 	
@@ -44,7 +56,7 @@ public class MyTreeSet2<T extends Comparable<? super T>> {
 	}
 	
 	public void insert(T x) {
-		root = insert(x, root, null);
+		root = insert(x, root, null, null);
 	}
 	
 	public void remove(T x) {
@@ -69,18 +81,26 @@ public class MyTreeSet2<T extends Comparable<? super T>> {
 		}
 	}
 	
-	private BinaryNode<T> insert(T x, BinaryNode<T> tree, BinaryNode<T> parentTree) {
+	private BinaryNode<T> insert(T x, BinaryNode<T> tree, BinaryNode<T> prev, BinaryNode<T> next) {
 		if (tree == null) {
 			modCount++;
-			return new BinaryNode<T>(x, null, null, parentTree);
-		} 
+			BinaryNode<T> newNode = new BinaryNode<T>(x, null, null, next, prev);
+			
+			if (next != null) {
+				next.prev = newNode;
+			}
+			if (prev != null) {
+				prev.next = newNode;
+			}
+			return newNode;
+		}
 		
 		int compareResult = x.compareTo(tree.element);
 		
 		if (compareResult < 0) {
-			tree.left = insert(x, tree.left, tree);
+			tree.left = insert(x, tree.left, tree, prev);//tree有左儿子，则tree是左儿子的下一个最大节点；
 		} else if (compareResult > 0){
-			tree.right = insert(x, tree.right, tree);
+			tree.right = insert(x, tree.right, next, tree);//tree有右儿子，则tree是右儿子是下一个最小节点
 		} else {
 			;
 		}
@@ -104,9 +124,9 @@ public class MyTreeSet2<T extends Comparable<? super T>> {
 			tree.right = remove(tree.element, tree.right);
 		} else {
 			modCount++;
-			BinaryNode<T> oneChild = (tree.left != null) ? tree.left : tree.right;
-			oneChild.parent = tree.parent;
-			tree = oneChild;
+			tree.prev.next = tree.next;//更新next链
+			tree.next.prev = tree.prev;//更新prev链
+			tree = (tree.left != null) ? tree.left : tree.right;
 		}
 		
 		return tree;
@@ -174,23 +194,14 @@ public class MyTreeSet2<T extends Comparable<? super T>> {
 			}
 			
 			T nextItem = current.element;
-			
+			previous = current;
 			//更新current
-			if (current.right != null) {//存在右儿子，下一个节点就是右子树的最小节点
-				current = findMin(current.right);
-			} else {
-				BinaryNode<T> child = current;
-				BinaryNode<T> parent = current.parent;
 
-				while (current !=null && current.left != child) {
-					child = current;
-					current = current.parent;
-				}
-
+			current = current.next;
+			
 				if (current == null) {
 					atEnd = true;
 				}
-			}
 
 			okToRemove = true;
 
@@ -208,28 +219,27 @@ public class MyTreeSet2<T extends Comparable<? super T>> {
 			MyTreeSet2.this.remove(previous.element);
 			okToRemove = false;
 		}
-		
 	}
-
+		
 	private static class BinaryNode<E>{
-		E element;
-		BinaryNode<E> left;
-		BinaryNode<E> right;
-		BinaryNode<E> next;
-		BinaryNode<E> prev;
-		
-		BinaryNode(E theElement) {
-			this(theElement, null, null, null, null);
+			E element;
+			BinaryNode<E> left;
+			BinaryNode<E> right;
+			BinaryNode<E> next;//下一个最小节点
+			BinaryNode<E> prev;//下一个最大节点
+			
+			BinaryNode(E theElement) {
+				this(theElement, null, null, null, null);
+			}
+			
+			BinaryNode(E theElement, 
+					BinaryNode<E> lt, BinaryNode<E> rt, 
+					BinaryNode<E> nt, BinaryNode<E> pv) {
+				element = theElement;
+				left = lt;
+				right = rt;
+				next = nt;
+				prev = pv;
+			}
 		}
-		
-		BinaryNode(E theElement, 
-				BinaryNode<E> lt, BinaryNode<E> rt, 
-				BinaryNode<E> nt, BinaryNode<E> pv) {
-			element = theElement;
-			left = lt;
-			right = rt;
-			next = nt;
-			prev = pv;
-		}
-	}
 }
