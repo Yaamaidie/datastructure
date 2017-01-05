@@ -1,5 +1,5 @@
 package exercise.ch4;
 
 public class Ex4_11 {
-	//见util.TreeSet类
+	//见util.MyTreeSet类
 }

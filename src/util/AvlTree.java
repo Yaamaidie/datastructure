@@ -1,9 +1,17 @@
 package util;
 
 /**
- * AVL数的插入和删除
+ * AVL树的插入和删除
  */
 public class AvlTree<T extends Comparable<? super T>> {
+	public static void main(String[] args) {
+		AvlTree<Integer> t = new AvlTree<>();
+		for (int i = 0; i < 20000; i++) {
+			t.insert(i);
+		}
+		t.printTree();
+		t.check();
+	}
 	
 	//允许的最大高度差
 	public static final int ALLOW_IMBALANCE = 1;
@@ -12,6 +20,67 @@ public class AvlTree<T extends Comparable<? super T>> {
 	
 	public AvlTree() {
 		root = null;
+	}
+	
+	public boolean isEmpty() {
+		return root == null;
+	}
+	
+	public void insert(T x) {
+		root = insert(x, root);
+	}
+	
+	public void remove(T x) {
+		root = remove(x, root);
+	}
+	
+	/**
+	 * 检查avl中的高度信息是否正确并且平衡性质是否成立
+	 * @return
+	 */
+	public boolean check() {
+		return check(root);
+	}
+	
+	/**
+	 * 打印
+	 * @param node
+	 * @return
+	 */
+	public void printTree() {
+		if (isEmpty()) {
+			System.out.println("Empty tree");
+		} else {
+			printTree(root);
+		}
+	}
+	
+	private void printTree(AvlNode<T> node) {
+		if (node != null) {
+			printTree(node.left);
+			System.out.println(node.element);
+			printTree(node.right);
+		}
+	}
+	
+	private boolean check(AvlNode<T> node) {
+		boolean okHeight, okBalance;//当前节点的高度和平衡信息
+		if (height(node) == Math.max(height(node.left), height(node.right)) + 1) {
+			okHeight = true;
+		} else {
+			return false;
+		}
+		if (Math.abs(height(node.left) - height(node.right)) <= ALLOW_IMBALANCE) {
+			okBalance = true;
+		} else {
+			return false;
+		}
+
+		if (okHeight && okBalance) {
+			return (check(node.left) && check(node.right));
+		} else {
+			return false;
+		}
 	}
 	
 	private int height(AvlNode<T> node) {
@@ -33,10 +102,6 @@ public class AvlTree<T extends Comparable<? super T>> {
 			;
 		}
 		return balance(node);
-	}
-	
-	private void remove(T x) {
-		root = remove(x, root);
 	}
 	
 	private AvlNode<T> remove(T x, AvlNode<T> node) {

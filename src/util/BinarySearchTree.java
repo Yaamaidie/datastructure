@@ -28,14 +28,24 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 		if (isEmpty()) {
 			throw new RuntimeException("树为空");
 		}
-		return findMin(root).element;
+		
+		BinaryNode<T> result = findMin(root);
+		if (result == null) {
+			throw new java.util.NoSuchElementException();
+		} 
+		return result.element;
 	}
 	
 	public T findMax() {
 		if (isEmpty()) {
 			throw new RuntimeException("树为空");
 		}
-		return findMax(root).element;
+		
+		BinaryNode<T> result = findMax(root);
+		if (result == null) {
+			throw new java.util.NoSuchElementException();
+		}
+		return result.element;
 	}
 	
 	public void insert(T t) {

@@ -6,7 +6,7 @@ package util;
  * @author lee
  *
  */
-public class MyTreeSet <T extends Comparable<? super T>> {
+public class MyTreeSet <T extends Comparable<? super T>> implements Iterable<T>{
 	public static void main(String[] args) {
 		MyTreeSet<Integer> treeSet = new MyTreeSet<>();
 		treeSet.insert(8);
@@ -15,6 +15,9 @@ public class MyTreeSet <T extends Comparable<? super T>> {
 		treeSet.insert(3);
 		treeSet.insert(9);
 		treeSet.printTree();
+		for (Integer i : treeSet) {
+			System.out.println(i);
+		}
 	}
 	
 	private BinaryNode<T> root;
@@ -184,6 +187,7 @@ public class MyTreeSet <T extends Comparable<? super T>> {
 			}
 			
 			T nextItem = current.element;
+			previous = current;
 			
 			//更新current
 			if (current.right != null) {//存在右儿子，下一个节点就是右子树的最小节点
