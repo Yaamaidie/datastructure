@@ -99,9 +99,11 @@ public class QuadraticProbingHashTable<T> {
 
 		allocateArray(2 * oldArray.length);
 
-		for (HashEntry<T> entry : oldArray)
-			if (entry != null && entry.isActive)
+		for (HashEntry<T> entry : oldArray) {
+			if (entry != null && entry.isActive) {
 				insert(entry.element);
+			}
+		}
 	}
 
 	// 平方函数的定义可得：f(i) = f(i - 1) + 2i - 1 = i ^ 2;
