@@ -1,9 +1,33 @@
 package util.sort;
 
+import java.util.Arrays;
+import java.util.Random;
+
 /**
  * 归并排序的实现
  */
 public class MergeSort {
+
+    public static void main(String[] args) {
+        int len = 100000;
+        //测试
+        Integer[] a = new Integer[len];
+        Integer[] b = new Integer[len];
+        for (int i = len - 1; i >= 0; i--) {
+            int tmp = new Random().nextInt(i + 1);
+            a[i] = tmp;
+            b[i] = tmp;
+        }
+        long t = System.currentTimeMillis();
+        mergeSort(a);
+        System.out.println("my merge sort for 10000 random integer costs: " + (System.currentTimeMillis() - t));
+
+        long t2 = System.currentTimeMillis();
+        Arrays.sort(b);
+        System.out.println("sort in java lib costs: " + (System.currentTimeMillis() - t2));
+
+    }
+
     public static <T extends Comparable<? super T>> void mergeSort(T[] a) {
         T[] tmpArray = (T[]) new Comparable[a.length];
 
