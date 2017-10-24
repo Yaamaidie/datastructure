@@ -208,12 +208,12 @@ public class MyTreeSet2<T extends Comparable<? super T>> implements Iterable<T>{
 			return nextItem;
 		}
 
-		public void remove() throws java.util.ConcurrentModificationException, java.lang.IllegalStateException{
+		public void remove() throws java.util.ConcurrentModificationException, IllegalStateException{
 			if (modCount != exceptModCount) {
 				throw new java.util.ConcurrentModificationException();
 			}
 			if (!okToRemove) {
-				throw new java.lang.IllegalStateException();
+				throw new IllegalStateException();
 			}
 
 			MyTreeSet2.this.remove(previous.element);
