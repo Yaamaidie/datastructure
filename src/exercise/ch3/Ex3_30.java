@@ -92,6 +92,11 @@ class SelfAdjustArray<T> implements Iterable<T> {
 		public T next() {
 			return theItems[current++];
 		}
+
+		@Override
+		public void remove() {
+
+		}
 	}
 }
 //链表实现
