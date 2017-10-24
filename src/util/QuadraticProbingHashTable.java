@@ -46,9 +46,9 @@ public class QuadraticProbingHashTable<T> {
 
 	private static class HashEntry<E> {
 		public E element;
-		public boolean isActive;// 如果被标记删除，则为false
+		boolean isActive;// 如果被标记删除，则为false
 
-		public HashEntry(E e, boolean i) {
+		HashEntry(E e, boolean i) {
 			element = e;
 			isActive = i;
 		}
