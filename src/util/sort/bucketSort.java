@@ -12,18 +12,27 @@ import java.util.Random;
 public class bucketSort {
 
     public static void main(String[] args) {
-        final int LEN = 1000000;
+        final int LEN = 10000000;
         final int P = 6;
         String[] arr = new String[LEN];
+        String[] arr2 = new String[LEN];
+        String random;
         for (int i = 0; i < LEN; i++) {
-            arr[i] = getRandomString(P);
+            random = getRandomString(P);
+            arr[i] = random;
+            arr2[i] = random;
         }
 
         long t = System.currentTimeMillis();
         radixSortA(arr, P);
 //        Arrays.sort(arr);
         System.out.println(System.currentTimeMillis() - t);
-        System.out.println(Arrays.toString(arr));
+
+        long t2 = System.currentTimeMillis();
+        countingRadixSort(arr, P);
+        System.out.println(System.currentTimeMillis() - t2);
+
+//        System.out.println(Arrays.toString(arr));
     }
 
     /**
@@ -54,6 +63,50 @@ public class bucketSort {
 
                 //每写回完一个桶，将桶清空
                 thisBucket.clear();
+            }
+        }
+    }
+
+    /**
+     * 使用计数器
+     * @param stringLen
+     */
+    public static void countingRadixSort(String[] arr, int stringLen) {
+        final int BUCKETS = 256;
+
+        int N = arr.length;
+        String[] buffer = new String[N];
+
+        String[] in = arr;
+        String[] out = buffer;
+
+        for (int pos = stringLen - 1; pos >= 0; pos--) {
+            //计数器，count[i + 1]表示桶i中元素的个数
+            int[] count = new int[BUCKETS + 1];
+
+            //扫描一遍输入数组，设置各个桶在计数器中的值
+            for (int i = 0; i < N; i++) {
+                count[in[i].charAt(pos) + 1]++; //i + 1 表示第i个桶的元素的个数
+            }
+            //让count[i]的值表示严格小于i的元素的个数
+            for (int b = 1; b <= BUCKETS; b++) {
+                count[b] += count[b - 1];
+            }
+            //最后的扫描。第一次见到i时，count[i]告诉我们将要写入的数组位置，然后count[i]++
+            for (int i = 0; i < N; i++) {
+                out[count[in[i].charAt(pos)]++] = in[i];
+            }
+
+            //交换in和out的角色
+            String[] tmp = in;
+            in = out;
+            out = tmp;
+        }
+
+        //如果趟数是偶数次，最后out引用的是arr，直接返回；否则out引用的是临时数组buffer，需要将buffer复制回arr
+        if (stringLen % 2 == 1) {
+            for (int i = 0; i < arr.length; i++) {
+                in[i] = out[i];
             }
         }
     }
