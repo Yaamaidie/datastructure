@@ -12,25 +12,33 @@ import java.util.Random;
 public class bucketSort {
 
     public static void main(String[] args) {
-        final int LEN = 10000000;
-        final int P = 6;
+        final int LEN = 1000000;
+        final int P = 6; //固定字符串长度
+        final int bound = P * 1; //变长字符串最大长度
         String[] arr = new String[LEN];
         String[] arr2 = new String[LEN];
+        String[] arr3 = new String[LEN];
         String random;
         for (int i = 0; i < LEN; i++) {
             random = getRandomString(P);
             arr[i] = random;
             arr2[i] = random;
+
+            arr3[i] = getRandomString(new Random().nextInt(bound) + 1);
         }
 
         long t = System.currentTimeMillis();
         radixSortA(arr, P);
 //        Arrays.sort(arr);
-        System.out.println(System.currentTimeMillis() - t);
+        System.out.println("使用 ArrayList 的基数排序，针对 字符串长度 = P 的字符串数组，耗时：" + (System.currentTimeMillis() - t));
 
         long t2 = System.currentTimeMillis();
-        countingRadixSort(arr, P);
-        System.out.println(System.currentTimeMillis() - t2);
+        countingRadixSort(arr2, P);
+        System.out.println("使用 计数器 的基数排序，针对 字符串长度 = P 的字符串数组，耗时：" + (System.currentTimeMillis() - t2));
+
+        long t3 = System.currentTimeMillis();
+        radixSort(arr3, bound);
+        System.out.println("使用 ArrayList 的基数排序，针对 字符串长度 <= P 的字符串数组，耗时：" + (System.currentTimeMillis() - t3));
 
 //        System.out.println(Arrays.toString(arr));
     }
@@ -110,6 +118,59 @@ public class bucketSort {
             }
         }
     }
+
+    /**
+     * 使用
+     * @param arr
+     * @param maxLen
+     */
+    public static void radixSort(String[] arr, int maxLen) {
+        final int BUCKETS = 256;
+
+        List<String>[] wordsByLength = new ArrayList[maxLen + 1];
+        List<String>[] buckets = new ArrayList[BUCKETS];
+
+        //初始化装不同长度字符串的桶
+        for (int i = 0; i < wordsByLength.length; i++) {
+            wordsByLength[i] = new ArrayList<>();
+        }
+
+        for (int i = 0; i < BUCKETS; i++) {
+            buckets[i] = new ArrayList<>();
+        }
+
+        //把输入数组的每个字符串按长度放到wordsByLength数组对应索引的桶里
+        for (String s : arr) {
+            wordsByLength[s.length()].add(s);
+        }
+
+        //把wordsByLength中的字符串放回到输入数组
+        int idx = 0;
+        for (List<String> wordList : wordsByLength) {
+            for (String s : wordList) {
+                arr[idx++] = s;
+            }
+        }
+
+        int startingIndex = arr.length;
+        for (int pos = maxLen - 1; pos >= 0; pos--) {
+            //只查看那些指定位置有字母的字符串
+            startingIndex -= wordsByLength[pos + 1].size();
+
+            for (int i = startingIndex; i < arr.length; i++) {
+                buckets[arr[i].charAt(pos)].add(arr[i]);
+            }
+
+            idx = startingIndex;
+            for (List<String> thisBucket: buckets) {
+                for (String s : thisBucket) {
+                    arr[idx++] = s;
+                }
+                thisBucket.clear();
+            }
+        }
+
+     }
 
     /**
      * 帮助函数，用来生成指定长度的随机字符串
