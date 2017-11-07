@@ -9,7 +9,7 @@ import java.util.Random;
  * 桶排序和基数排序
  * 通过对字符串排序，演示了基数排序的两种实现，一种使用ArrayList作为桶，另一种使用计数器
  */
-public class bucketSort {
+public class BucketSort {
 
     public static void main(String[] args) {
         final int LEN = 1000000;

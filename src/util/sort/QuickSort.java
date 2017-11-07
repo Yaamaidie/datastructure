@@ -1,12 +1,11 @@
 package util.sort;
 
-import java.util.Arrays;
 import java.util.Random;
 
 /**
  * 快速排序的实现
  */
-public class quickSort {
+public class QuickSort {
 
     public static int CUTOFF = 20; //截止范围
 
@@ -70,7 +69,7 @@ public class quickSort {
     //三数值中分法（Median-of-Three Partitioning）获得pivot
     //副作用是为分割策略做准备，包括保持a[left]，a[right]，a[center]有序，
     //然后交换a[center]和a[right-1]使得pivot放在适当的位置
-    private static <T extends Comparable<? super T>> T media3(T[] a, int left, int right) {
+    public static <T extends Comparable<? super T>> T media3(T[] a, int left, int right) {
         int center = (left + right) / 2;
 
         if (a[center].compareTo(a[left]) < 0) {
@@ -90,7 +89,7 @@ public class quickSort {
     }
 
     //交换
-    private static <T extends Comparable<? super T>> void swapReferences(T[] a, int idx1, int idx2) {
+    public static <T extends Comparable<? super T>> void swapReferences(T[] a, int idx1, int idx2) {
         T tmp = a[idx1];
         a[idx1] = a[idx2];
         a[idx2] = tmp;
