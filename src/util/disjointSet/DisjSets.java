@@ -72,6 +72,20 @@ public class DisjSets {
         }
     }
 
+    /**
+     * 路径压缩的find例程，路径压缩的效果是：从x到根的路径上的每一个节点都使其父节点成为该树的根
+     * @param x
+     * @return
+     */
+    public int find2(int x) {
+        if (s[x] < 0) {
+            return x;
+        } else {
+            return s[x] = find(s[x]);
+        }
+
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(s);
