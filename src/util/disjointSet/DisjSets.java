@@ -11,6 +11,10 @@ public class DisjSets {
 
     public DisjSets(int numElements) {
         s = new int[numElements];
+        clear();
+    }
+
+    public void clear() {
         Arrays.fill(s, -1);
     }
 
@@ -25,6 +29,37 @@ public class DisjSets {
     }
 
     /**
+     * 按树的大小求并
+     * @param root1
+     * @param root2
+     */
+    public void union2(int root1, int root2) {
+        if (s[root1] <= s[root2]) { //root1的节点更多
+            s[root1] += s[root2];
+            s[root2] = root1;
+        } else {
+            s[root2] += s[root1];
+            s[root1] = root2;
+        }
+    }
+
+    /**
+     * 按树的深度求并
+     * @param root1
+     * @param root2
+     */
+    public void union3(int root1, int root2) {
+        if (s[root2] < s[root1]) { //root2的深度更大
+            s[root1] = root2;
+        } else {
+            if (s[root1] == s[root2]) {
+                s[root1]--;
+            }
+            s[root2] = root1;
+        }
+    }
+
+    /**
      * 执行一次find
      * @param x 要搜索的元素
      * @return 包含元素x的集合
@@ -35,5 +70,29 @@ public class DisjSets {
         } else {
             return find(s[x]);
         }
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(s);
+    }
+
+    public static void main(String[] args) {
+        DisjSets ds = new DisjSets(8);
+
+        //测试按大小求并
+        ds.union2(4,5);
+        ds.union2(6,7);
+        ds.union2(4,6);
+        ds.union2(3,4);
+        System.out.println(ds);
+
+        //测试按深度求并
+        ds.clear();
+        ds.union3(4,5);
+        ds.union3(6,7);
+        ds.union3(4,6);
+        ds.union3(3,4);
+        System.out.println(ds);
     }
 }
