@@ -1,9 +1,6 @@
 package util.graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 图
@@ -28,11 +25,12 @@ public class Graph {
     }
 
     /**
-     * 拓扑排序
+     * 简单拓扑排序
      * 时间复杂度为O(|V|^2)，|V|为顶点集合的大小
      * @throws CycleFoundException
      */
     public void topsort() throws CycleFoundException {
+        System.out.print("topNum: ");
         for (int counter = 0; counter < vertexSize; counter++) {
             Vertex v = findVertexOfIndegreeZero();
             if (v == null) {
@@ -42,7 +40,50 @@ public class Graph {
             for (int point : v.adList) {
                 findVertexByPoint(point).indegree--;
             }
+
+            System.out.print(" " + v.point);
         }
+        System.out.println();
+    }
+
+    /**
+     * 改进的拓扑排序
+     * 时间复杂度为O(|V| + |E|)，|V|为顶点集合的大小，|E|为边集合的大小
+     * @throws CycleFoundException
+     */
+    public void topsort2() throws CycleFoundException {
+        Queue<Vertex> q = new LinkedList<>();
+        int counter = 0;
+
+        //初始时将所有（未分配topNum）的入度为0的顶点压入栈中
+        for (Vertex v : adjacentList.values()) {
+            if (v.indegree == 0) {
+                q.offer(v);
+            }
+        }
+
+        System.out.print("topNum: ");
+        while (!q.isEmpty()) {
+            //弹出并删除一个入度为0的顶点
+            Vertex v = q.poll();
+            v.topNum = counter++;
+
+            //注意到内层循环对每条边最多执行一次，且每条边不会重复执行，所以内层循环的总时间复杂度为O(|E|)
+            for (Integer p : v.adList) {
+                Vertex w = findVertexByPoint(p);
+                if (--w.indegree == 0) {
+                    q.offer(w);
+                }
+            }
+
+            System.out.print(" " + v.point);
+        }
+        System.out.println();
+
+        if (counter != vertexSize) {
+            throw new CycleFoundException();
+        }
+
     }
 
     /**
