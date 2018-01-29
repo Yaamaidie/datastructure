@@ -46,7 +46,7 @@ public class TopologicalSorting extends Graph{
         Queue<Vertex> q = new LinkedList<>();
         int counter = 0;
 
-        //初始时将所有（未分配topNum）的入度为0的顶点压入栈中
+        //初始时将所有（未分配topNum）的入度为0的顶点放入队列
         for (Vertex v : adjacentList.values()) {
             if (((TopoVertex)v).indegree == 0) {
                 q.offer(v);
